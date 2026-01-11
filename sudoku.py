@@ -125,3 +125,45 @@ for i, fila in enumerate(individuo_test):
         print(f"  ✓ Fila {i+1}: OK")
 print("✓ Todas las filas tienen números del 1-9 sin repetir")
 
+def crear_poblacion(tablero_original, fijas, tamaño=100):
+    """
+    Crea la población inicial de individuos
+    
+    Args:
+        tablero_original: Sudoku inicial con celdas vacías
+        fijas: Matriz de posiciones fijas
+        tamaño: Número de individuos en la población
+    
+    Returns:
+        Lista de individuos (tableros completos)
+    """
+    poblacion = []
+    print(f"\n🧬 Generando población de {tamaño} individuos...")
+    
+    for i in range(tamaño):
+        individuo = crear_individuo(tablero_original, fijas)
+        poblacion.append(individuo)
+        
+        # Mostrar progreso cada 20 individuos
+        if (i + 1) % 20 == 0:
+            print(f"  Generados: {i+1}/{tamaño}")
+    
+    print(f"✓ Población inicial creada: {len(poblacion)} individuos")
+    return poblacion
+
+def mostrar_muestra_poblacion(poblacion, n=3):
+    """Muestra una muestra de individuos de la población"""
+    print(f"\n📋 MUESTRA DE LA POBLACIÓN (primeros {n} individuos):")
+    for i in range(min(n, len(poblacion))):
+        mostrar_sudoku(poblacion[i], f"Individuo #{i+1}")
+
+# Crear población inicial
+TAMAÑO_POBLACION = 50  # Empezamos con 50 para pruebas
+poblacion = crear_poblacion(sudoku_inicial, posiciones_fijas, TAMAÑO_POBLACION)
+
+# Mostrar muestra
+mostrar_muestra_poblacion(poblacion, 2)
+
+print("\n" + "="*50)
+print("PARTE 1 COMPLETADA: Representación del individuo ✓")
+print("="*50)
