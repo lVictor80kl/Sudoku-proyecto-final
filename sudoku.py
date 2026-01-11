@@ -36,3 +36,21 @@ def mostrar_sudoku(tablero):
 
 # probar la funcion
 mostrar_sudoku(sudoku_inicial)
+
+def obtener_fijas(tablero):
+    # las celdas que ya tienen numero no se pueden cambiar
+    fijas = []
+    for i in range(9):
+        fila_fijas = []
+        for j in range(9):
+            if tablero[i][j] != 0:
+                fila_fijas.append(True)
+            else:
+                fila_fijas.append(False)
+        fijas.append(fila_fijas)
+    return fijas
+
+# probar
+mostrar_sudoku(sudoku_inicial)
+posiciones_fijas = obtener_fijas(sudoku_inicial)
+print("Posiciones fijas identificadas")
