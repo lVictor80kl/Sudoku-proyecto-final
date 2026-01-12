@@ -347,4 +347,3 @@ def mostrar_proceso_evolutivo(historial_generaciones, historial_fitness):
     
     plt.tight_layout()
     plt.show()
-
