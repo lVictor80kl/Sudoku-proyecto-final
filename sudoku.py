@@ -167,3 +167,29 @@ mostrar_muestra_poblacion(poblacion, 2)
 print("\n" + "="*50)
 print("PARTE 1 COMPLETADA: Representación del individuo ✓")
 print("="*50)
+
+# PARTE 2: ALGORITMO GENÉTICO
+
+def calcular_fitness(tablero):
+    """
+    Calcula el fitness de un tablero de Sudoku.
+    Fitness = número de conflictos (duplicados en columnas y cajas 3x3)
+    Menor fitness es mejor (0 = solución perfecta)
+    """
+    fitness = 0
+    
+    # Verificar columnas
+    for j in range(9):
+        columna = [tablero[i][j] for i in range(9)]
+        fitness += 9 - len(set(columna))  # Número de duplicados
+    
+    # Verificar cajas 3x3
+    for caja_i in range(0, 9, 3):
+        for caja_j in range(0, 9, 3):
+            caja = []
+            for i in range(3):
+                for j in range(3):
+                    caja.append(tablero[caja_i + i][caja_j + j])
+            fitness += 9 - len(set(caja))  # Número de duplicados
+    
+    return fitness
