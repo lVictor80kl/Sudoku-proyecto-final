@@ -324,3 +324,27 @@ def algoritmo_genetico(tablero_original, fijas, tamaño_poblacion=100, generacio
         print(f"Mejor fitness alcanzado: {mejor_fitness}")
 
     return mejor_individuo, historial_generaciones, historial_fitness, generacion_solucion
+
+def mostrar_proceso_evolutivo(historial_generaciones, historial_fitness):
+    """
+    Muestra un diagrama del proceso evolutivo
+    """
+    plt.figure(figsize=(12, 6))
+    plt.plot(historial_generaciones, historial_fitness, 'b-', linewidth=2, marker='o', markersize=4)
+    plt.title('Proceso Evolutivo - Algoritmo Genético Sudoku', fontsize=14, fontweight='bold')
+    plt.xlabel('Generación', fontsize=12)
+    plt.ylabel('Mejor Fitness (número de conflictos)', fontsize=12)
+    plt.grid(True, alpha=0.3)
+    plt.ylim(bottom=0)
+    
+    # Añadir explicación
+    plt.text(0.02, 0.98, 'Proceso de Mutación y Selección:\n'
+             '• Cada generación: selección, cruce y mutación\n'
+             '• Fitness baja = menos conflictos\n'
+             '• Meta: Fitness = 0 (solución perfecta)',
+             transform=plt.gca().transAxes, fontsize=10,
+             verticalalignment='top', bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
+    
+    plt.tight_layout()
+    plt.show()
+
