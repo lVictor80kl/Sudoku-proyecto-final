@@ -193,3 +193,32 @@ def calcular_fitness(tablero):
             fitness += 9 - len(set(caja))  # Número de duplicados
     
     return fitness
+
+def seleccion_torneo(poblacion, fitnesses, k=3):
+    """
+    Selección por torneo: selecciona k individuos aleatorios y devuelve el mejor
+    """
+    seleccionados = random.sample(list(zip(poblacion, fitnesses)), k)
+    return min(seleccionados, key=lambda x: x[1])[0]  # El de menor fitness
+
+def cruce_padres(padre1, padre2, fijas):
+    """
+    Cruce entre dos padres para generar un hijo.
+    Estrategia: para cada fila, elegir aleatoriamente del padre1 o padre2,
+    pero respetando las posiciones fijas.
+    """
+    hijo = []
+    for i in range(9):
+        if random.random() < 0.5:
+            fila_hijo = list(padre1[i])
+        else:
+            fila_hijo = list(padre2[i])
+        
+        # Asegurar que las posiciones fijas se mantengan del original
+        for j in range(9):
+            if fijas[i][j]:
+                fila_hijo[j] = sudoku_inicial[i][j]
+        
+        hijo.append(fila_hijo)
+    
+    return hijo
