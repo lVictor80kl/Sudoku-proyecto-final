@@ -222,3 +222,105 @@ def cruce_padres(padre1, padre2, fijas):
         hijo.append(fila_hijo)
     
     return hijo
+
+def mutacion(individuo, fijas, tasa_mutacion=0.1):
+    """
+    Mutación: intercambiar dos posiciones no fijas en filas aleatorias
+    """
+    mutado = [fila[:] for fila in individuo]  # Copia profunda
+    
+    for i in range(9):
+        if random.random() < tasa_mutacion:
+            # Encontrar posiciones no fijas en esta fila
+            posiciones_libres = [j for j in range(9) if not fijas[i][j]]
+            if len(posiciones_libres) >= 2:
+                # Intercambiar dos posiciones aleatorias
+                j1, j2 = random.sample(posiciones_libres, 2)
+                mutado[i][j1], mutado[i][j2] = mutado[i][j2], mutado[i][j1]
+    
+    return mutado
+
+def algoritmo_genetico(tablero_original, fijas, tamaño_poblacion=100, generaciones=1000, tasa_mutacion=0.1, elitismo=0.1):
+    """
+    Algoritmo genético principal para resolver Sudoku con elitismo
+    """
+    print("\n" + "="*60)
+    print("🚀 INICIANDO ALGORITMO GENÉTICO")
+    print("="*60)
+
+    # Crear población inicial
+    poblacion = crear_poblacion(tablero_original, fijas, tamaño_poblacion)
+
+    # Calcular fitness inicial
+    fitnesses = [calcular_fitness(ind) for ind in poblacion]
+    mejor_fitness = min(fitnesses)
+    mejor_individuo = poblacion[fitnesses.index(mejor_fitness)]
+
+    print(f"\n📊 Fitness inicial - Mejor: {mejor_fitness}")
+
+    # Historial para el diagrama
+    historial_fitness = [mejor_fitness]
+    historial_generaciones = [0]
+
+    solucion_encontrada = False
+    generacion_solucion = -1
+
+    # Número de individuos élite
+    num_elite = int(tamaño_poblacion * elitismo)
+
+    for gen in range(1, generaciones + 1):
+        nueva_poblacion = []
+
+        # Calcular fitness de la población actual
+        fitnesses = [calcular_fitness(ind) for ind in poblacion]
+
+        # ELITISMO: Preservar los mejores individuos
+        elite_indices = sorted(range(len(fitnesses)), key=lambda i: fitnesses[i])[:num_elite]
+        elite = [poblacion[i] for i in elite_indices]
+        nueva_poblacion.extend(elite)
+
+        # Generar el resto de la población
+        while len(nueva_poblacion) < tamaño_poblacion:
+            # Selección
+            padre1 = seleccion_torneo(poblacion, fitnesses)
+            padre2 = seleccion_torneo(poblacion, fitnesses)
+
+            # Cruce
+            hijo = cruce_padres(padre1, padre2, fijas)
+
+            # Mutación
+            hijo = mutacion(hijo, fijas, tasa_mutacion)
+
+            nueva_poblacion.append(hijo)
+
+        # Actualizar población
+        poblacion = nueva_poblacion
+        fitnesses = [calcular_fitness(ind) for ind in poblacion]
+
+        # Encontrar el mejor de esta generación
+        mejor_fitness_gen = min(fitnesses)
+        mejor_individuo_gen = poblacion[fitnesses.index(mejor_fitness_gen)]
+
+        # Actualizar mejor global
+        if mejor_fitness_gen < mejor_fitness:
+            mejor_fitness = mejor_fitness_gen
+            mejor_individuo = mejor_individuo_gen
+
+        # Registrar en historial cada 50 generaciones
+        if gen % 50 == 0:
+            historial_fitness.append(mejor_fitness)
+            historial_generaciones.append(gen)
+            print(f"Gen {gen} | Mejor fitness: {mejor_fitness}")
+
+        # Verificar si encontramos solución perfecta
+        if mejor_fitness == 0 and not solucion_encontrada:
+            solucion_encontrada = True
+            generacion_solucion = gen
+            print(f"\n🎉 ¡SOLUCIÓN PERFECTA ENCONTRADA EN GENERACIÓN {gen}!")
+            break
+
+    if not solucion_encontrada:
+        print(f"\n⚠️ No se encontró solución perfecta en {generaciones} generaciones")
+        print(f"Mejor fitness alcanzado: {mejor_fitness}")
+
+    return mejor_individuo, historial_generaciones, historial_fitness, generacion_solucion
